@@ -24,25 +24,19 @@ const HOST = window.location.host;
 const REDIRECT_URI = `http://${HOST}/implicit/callback`;
 
 const oktaAuth = new OktaAuth({
-  maxClockSkew: Number.MAX_SAFE_INTEGER, // FORCES TOKEN RENEW
+  // maxClockSkew: Number.MAX_SAFE_INTEGER, // FORCES TOKEN RENEW
   issuer: ISSUER,
-  client_id: CLIENT_ID,
-  redirect_uri: REDIRECT_URI,
+  clientId: CLIENT_ID,
+  redirectUri: REDIRECT_URI,
 });
 
 window.login = async function login(event) {
   event.preventDefault(); // Necessary to prevent default navigation for redirect below
 
-  const issuer = ISSUER;
-  const clientId = CLIENT_ID;
-  const redirectUri = REDIRECT_URI;
   const responseType = ['id_token', 'token'];
   const scopes = ['openid', 'email', 'profile'];
 
   oktaAuth.token.getWithRedirect({
-    issuer,
-    clientId,
-    redirectUri,
     responseType,
     scopes,
   });
