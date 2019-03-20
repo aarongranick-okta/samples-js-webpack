@@ -24,6 +24,7 @@ const HOST = window.location.host;
 const REDIRECT_URI = `http://${HOST}/implicit/callback`;
 
 const oktaAuth = new OktaAuth({
+  maxClockSkew: Number.MAX_SAFE_INTEGER, // FORCES TOKEN RENEW
   issuer: ISSUER,
   client_id: CLIENT_ID,
   redirect_uri: REDIRECT_URI,
