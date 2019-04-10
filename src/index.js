@@ -30,15 +30,17 @@ const oktaAuth = new OktaAuth({
   redirectUri: REDIRECT_URI,
 });
 
+const code = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
+const codeVerifier = oktaAuth.pkce.generateVerifier(code);
+
 window.login = async function login(event) {
   event.preventDefault(); // Necessary to prevent default navigation for redirect below
 
-  const responseType = ['id_token', 'token'];
   const scopes = ['openid', 'email', 'profile'];
-
-  oktaAuth.token.getWithRedirect({
-    responseType,
+  const codeChallenge = await oktaAuth.pkce.computeChallenge(codeVerifier);
+  oktaAuth.pkce.getWithRedirect({
     scopes,
+    codeChallenge,
   });
 };
 
@@ -49,7 +51,12 @@ window.logout = async function logout() {
 };
 
 async function handleAuthentication() {
-  let tokens = await oktaAuth.token.parseFromUrl();
+  let authorizationCode = await oktaAuth.pkce.parseFromUrl();
+  let tokens = await oktaAuth.pkce.exchangeForToken({
+    code: authorizationCode,
+    codeVerifier: codeVerifier,
+  });
+  console.log('tokens', tokens);
   tokens = Array.isArray(tokens) ? tokens : [tokens];
   tokens.forEach((token) => {
     if (token.idToken) {
