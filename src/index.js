@@ -38,9 +38,14 @@ window.login = async function login(event) {
 
   const scopes = ['openid', 'email', 'profile'];
   const codeChallenge = await oktaAuth.pkce.computeChallenge(codeVerifier);
-  oktaAuth.pkce.getWithRedirect({
+  const responseType = 'code';
+  const responseMode = 'fragment';
+
+  oktaAuth.token.getWithRedirect({
     scopes,
     codeChallenge,
+    responseType,
+    responseMode
   });
 };
 
@@ -51,7 +56,7 @@ window.logout = async function logout() {
 };
 
 async function handleAuthentication() {
-  let authorizationCode = await oktaAuth.pkce.parseFromUrl();
+  let { authorizationCode } = await oktaAuth.token.parseFromUrl();
   let tokens = await oktaAuth.pkce.exchangeForToken({
     code: authorizationCode,
     codeVerifier: codeVerifier,
